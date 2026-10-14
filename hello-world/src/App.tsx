@@ -114,7 +114,7 @@ function App(){
           {title: "London Life", duration: "3:33"},
           {title: "Loser Monologue", duration: "3:05"},
           {title: "Celebrity Deathmatch", duration: "3:02"},
-          {title: "One More, Then I'll Sleep", duration: "1:39"}
+          {title: "Oneasdasdasd More, Then I'll Sleep", duration: "1:39"}
         ]}/>
         
       </div>
