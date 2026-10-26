@@ -66,6 +66,7 @@ function Album({title, cover = "Nie ma zdjęcia", year, artist, genre, songs}: A
   return(
     <div className="card">
       <img className="card-img-top" src={cover} alt={cover} />
+      
       <div className="card-body">
         <h4 className="card-title">{title}</h4>
         <p className="card-text">{artist}</p>
@@ -264,6 +265,7 @@ function App() {
       </h2>
       {isAlbumsOpen && (
       <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div className="col">
         <Album
           title={LongestAlbum.title}
           artist={LongestAlbum.artist}
@@ -272,6 +274,7 @@ function App() {
           genre={LongestAlbum.genre}
           songs={LongestAlbum.songs}
         />
+        </div>
       </div>
       )}
     </div>
