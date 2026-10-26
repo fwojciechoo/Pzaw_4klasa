@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 interface MovieProps {
   title: string;
   poster: string;
@@ -25,14 +27,17 @@ interface AlbumProps {
 
 function Movie({ title, poster = "Nie ma zdjęcia", year, rating }: MovieProps) {
   return (
-    <div>
-      <img src={poster} alt={title} />
-      <h4>{title}</h4>
-      <p>{year}</p>
-      <p>Ocena: {rating}/10</p>
+    <div className="card">
+    <img src={poster} className="card-img-top" alt={title} />
+  
+    <div className="card-body">
+      <h4 className="card-title">{title}</h4>
+      <p className="card-text">{year}</p>
+      <p className="card-text">Ocena: {rating}/10</p>
 
-      {rating >= 8 && <p>Polecany</p>}
+      {rating >= 8 && <p className="polecany">Polecany</p>}
     </div>
+  </div>
   );
 }
 
@@ -41,13 +46,16 @@ function Movie({ title, poster = "Nie ma zdjęcia", year, rating }: MovieProps) 
 
 function Book({title, cover = "Nie ma zdjęcia", year, pages}: BookProps){
   return(
-    <div>
-      <img src={cover} alt={cover}/>
-      <h4>{title}</h4>
-      <p>{year}</p>
-      <p>{pages}</p>
+    <div className="card">
+      <img className="card-img-top" src={cover} alt={cover}/>
 
-      {year < 2000 && <p>Klasyka</p>}
+      <div className="card-body">
+        <h4 className="card-title">{title}</h4>
+        <p className="card-text">{year}</p>
+        <p className="card-text">{pages}</p>
+
+        {year < 2000 && <p className="klasyka">Klasyka</p>}
+      </div>
     </div>
   );
 }
@@ -56,26 +64,30 @@ function Book({title, cover = "Nie ma zdjęcia", year, pages}: BookProps){
 
 function Album({title, cover = "Nie ma zdjęcia", year, artist, genre, songs}: AlbumProps){
   return(
-    <div>
-      <img src={cover} alt={cover} />
-      <h4>{title}</h4>
-      <p>{artist}</p>
-      <p>{year}</p>
-      <p>{genre}</p>
+    <div className="card">
+      <img className="card-img-top" src={cover} alt={cover} />
+      <div className="card-body">
+        <h4 className="card-title">{title}</h4>
+        <p className="card-text">{artist}</p>
+        <p className="card-text">{year}</p>
+        <p className="card-text">{genre}</p>
 
-      <ol>
-        {songs.length === 0 ? (
-          <p>Brak utworów</p>
-        ) : (
-          songs.map((element) => {
-            return (
-              <li key={element.title}>
-                {element.title} - {element.duration}
-              </li>
-            );
-          })
-        )}
-      </ol>
+          {songs.length === 0 ? (
+            <p className="alert alert-info" role="alert">Brak utworów</p>
+          ) : (
+          <table className="table table-striped table-hover">
+            <tbody>
+              {songs.map((song, index) => (
+                <tr key={song.title}>
+                  <td>{index + 1}.</td>
+                  <td className="fst-italic">{song.title}</td>
+                  <td className="text-end">{song.duration}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          )}
+      </div>
     </div>
   );
 }
@@ -103,7 +115,7 @@ const movies: MovieProps[] = [
     title: "Gwiezdne wojny: Przebudzenie Mocy",
     poster: "public/przebudzenie_mocy.jpg",
     year: 2015,
-    rating: 7.9
+    rating: 9.0
   },
   
 ];
@@ -185,7 +197,7 @@ books.sort((a, b) => a.title.localeCompare(b.title));
 albums.sort((a, b) => a.title.localeCompare(b.title));
 
 
-const RecentMovies = movies.filter((movie) => movie.year > 2010);
+const RecentMovies = movies.filter((movie) => movie.year > 2010).sort((a, b) => b.year - a.year);
 
 const BooksByYear = [...books].sort((a, b) => b.year - a.year);
 
@@ -197,39 +209,61 @@ for (const album of albums) {
   }
 }
 
-
+//-----
 
 function App() {
+
+  //use states
+  const [isMoviesOpen, setIsMoviesOpen] = useState(true);
+  const [isBooksOpen, setIsBooksOpen] = useState(true);
+  const [isAlbumsOpen, setIsAlbumsOpen] = useState(true);
+  //-----
+  
   return (
-    <div>
-      <div>
-        <h2>Filmy wydane po 2010 roku</h2>
+    <div className="container" data-bs-theme="dark">
+      <h2 onClick={() => setIsMoviesOpen(!isMoviesOpen)}>
+        Najnowsze filmy{isMoviesOpen ? " ⏷" : " ⏵"}
+      </h2>
+        {isMoviesOpen && (
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {RecentMovies.map((movie) => (
-          <Movie
-            key={movie.title}
-            title={movie.title}
-            poster={movie.poster}
-            year={movie.year}
-            rating={movie.rating}
-          />
+          <div className="col" key={movie.title}>
+            <Movie
+              title={movie.title}
+              poster={movie.poster}
+              year={movie.year}
+              rating={movie.rating}
+            />
+          </div>
         ))}
       </div>
+      )}
 
-      <div>
-        <h2>Książki od najnowszej</h2>
+      
+      <h2 onClick={() => setIsBooksOpen(!isBooksOpen)}>
+        Książki od najnowszej{isBooksOpen ? " ⏷" : " ⏵"}
+      </h2>
+      {isBooksOpen && (
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {BooksByYear.map((book) => (
-          <Book
-            key={book.title}
-            title={book.title}
-            cover={book.cover}
-            year={book.year}
-            pages={book.pages}
-          />
+          <div className="col" key={book.title}>
+            <Book
+              title={book.title}
+              cover={book.cover}
+              year={book.year}
+              pages={book.pages}
+            />
+          </div>
         ))}
       </div>
+      )}  
 
-      <div>
-        <h2>Album z największą liczbą utworów</h2>
+      
+      <h2 onClick={() => setIsAlbumsOpen(!isAlbumsOpen)}>
+        Album z największą liczbą utworów{isAlbumsOpen ? " ⏷" : " ⏵"}
+      </h2>
+      {isAlbumsOpen && (
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <Album
           title={LongestAlbum.title}
           artist={LongestAlbum.artist}
@@ -239,6 +273,7 @@ function App() {
           songs={LongestAlbum.songs}
         />
       </div>
+      )}
     </div>
   );
 }
