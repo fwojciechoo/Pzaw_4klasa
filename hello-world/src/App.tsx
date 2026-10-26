@@ -2,6 +2,7 @@ interface MovieProps {
   title: string;
   poster: string;
   year: number;
+  rating: number;
 
 }
 
@@ -22,12 +23,15 @@ interface AlbumProps {
   songs: {title: string, duration: string}[];
 }
 
-function Movie({title, poster = "Nie ma zdjęcia", year}: MovieProps){
-  return(
+function Movie({ title, poster = "Nie ma zdjęcia", year, rating }: MovieProps) {
+  return (
     <div>
-      <img src={poster} alt={poster}/>
+      <img src={poster} alt={title} />
       <h4>{title}</h4>
       <p>{year}</p>
+      <p>Ocena: {rating}/10</p>
+
+      {rating >= 8 && <p>Polecany</p>}
     </div>
   );
 }
@@ -42,6 +46,8 @@ function Book({title, cover = "Nie ma zdjęcia", year, pages}: BookProps){
       <h4>{title}</h4>
       <p>{year}</p>
       <p>{pages}</p>
+
+      {year < 2000 && <p>Klasyka</p>}
     </div>
   );
 }
@@ -51,19 +57,24 @@ function Book({title, cover = "Nie ma zdjęcia", year, pages}: BookProps){
 function Album({title, cover = "Nie ma zdjęcia", year, artist, genre, songs}: AlbumProps){
   return(
     <div>
-      <img src={cover} alt={cover}/>
+      <img src={cover} alt={cover} />
       <h4>{title}</h4>
       <p>{artist}</p>
       <p>{year}</p>
       <p>{genre}</p>
-      <ol>
-        {songs.map(element => {
-          return(
-            <li>{element.title} - {element.duration}</li>
-          );
-        })
 
-        }
+      <ol>
+        {songs.length === 0 ? (
+          <p>Brak utworów</p>
+        ) : (
+          songs.map((element) => {
+            return (
+              <li key={element.title}>
+                {element.title} - {element.duration}
+              </li>
+            );
+          })
+        )}
       </ol>
     </div>
   );
@@ -73,18 +84,28 @@ const movies: MovieProps[] = [
   {
     title: "Gwiezdne wojny: część III – Zemsta Sithów",
     poster: "public/Revenge of the Sith.jpg",
-    year: 2005
+    year: 2005,
+    rating: 8.3
   },
     {
     title: "Gwiezdne wojny: część I – Mroczne widmo",
     poster: "public/Star_Wars_Phantom_Menace.jpg",
-    year: 1999
+    year: 1999,
+    rating: 6.5
   },
     {
     title: "Gwiezdne wojny: część II – Atak klonów",
     poster: "public/Atak_klonow.jpg",
-    year: 2002
+    year: 2002,
+    rating: 6.6
   },
+    {
+    title: "Gwiezdne wojny: Przebudzenie Mocy",
+    poster: "public/przebudzenie_mocy.jpg",
+    year: 2015,
+    rating: 7.9
+  },
+  
 ];
 
 const books: BookProps[] = [
@@ -157,22 +178,46 @@ const albums: AlbumProps[] = [
   }
 ];
 
+//Sort
+
+movies.sort((a, b) => a.title.localeCompare(b.title));
+books.sort((a, b) => a.title.localeCompare(b.title));
+albums.sort((a, b) => a.title.localeCompare(b.title));
+
+
+const RecentMovies = movies.filter((movie) => movie.year > 2010);
+
+const BooksByYear = [...books].sort((a, b) => b.year - a.year);
+
+let LongestAlbum = albums[0];
+
+for (const album of albums) {
+  if (album.songs.length > LongestAlbum.songs.length) {
+    LongestAlbum = album;
+  }
+}
+
+
+
 function App() {
   return (
     <div>
       <div>
-        {movies.map((movie) => (
+        <h2>Filmy wydane po 2010 roku</h2>
+        {RecentMovies.map((movie) => (
           <Movie
             key={movie.title}
             title={movie.title}
             poster={movie.poster}
             year={movie.year}
+            rating={movie.rating}
           />
         ))}
       </div>
 
       <div>
-        {books.map((book) => (
+        <h2>Książki od najnowszej</h2>
+        {BooksByYear.map((book) => (
           <Book
             key={book.title}
             title={book.title}
@@ -184,17 +229,15 @@ function App() {
       </div>
 
       <div>
-        {albums.map((album) => (
-          <Album
-            key={album.title}
-            title={album.title}
-            artist={album.artist}
-            cover={album.cover}
-            year={album.year}
-            genre={album.genre}
-            songs={album.songs}
-          />
-        ))}
+        <h2>Album z największą liczbą utworów</h2>
+        <Album
+          title={LongestAlbum.title}
+          artist={LongestAlbum.artist}
+          cover={LongestAlbum.cover}
+          year={LongestAlbum.year}
+          genre={LongestAlbum.genre}
+          songs={LongestAlbum.songs}
+        />
       </div>
     </div>
   );
