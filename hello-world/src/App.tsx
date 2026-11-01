@@ -27,12 +27,13 @@ interface AlbumProps {
 
 function Movie({ title, poster = "Nie ma zdjęcia", year, rating }: MovieProps) {
   return (
-    <div className="card">
+    <div className="card" onClick={() => console.log(`Wybrano film: ${title}`)}>
     <img src={poster} className="card-img-top" alt={title} />
-  
+    
     <div className="card-body">
       <h4 className="card-title">{title}</h4>
       <p className="card-text">{year}</p>
+      <button className="btn btn-info" onClick={() => console.log(`Pokaż szczegóły dla ${title}`)}>Pokaż szczegóły</button>
       <p className="card-text">Ocena: {rating}/10</p>
 
       {rating >= 8 && <p className="polecany">Polecany</p>}
@@ -63,6 +64,10 @@ function Book({title, cover = "Nie ma zdjęcia", year, pages}: BookProps){
 
 
 function Album({title, cover = "Nie ma zdjęcia", year, artist, genre, songs}: AlbumProps){
+  function handleSongClick(songTitle: string, albumTitle: string) {
+    console.log(`Wybrano utwór: ${songTitle} z ${albumTitle}`);
+  }
+
   return(
     <div className="card">
       <img className="card-img-top" src={cover} alt={cover} />
@@ -79,7 +84,7 @@ function Album({title, cover = "Nie ma zdjęcia", year, artist, genre, songs}: A
           <table className="table table-striped table-hover">
             <tbody>
               {songs.map((song, index) => (
-                <tr key={song.title}>
+                <tr onClick={() => handleSongClick(song.title, title)} key={song.title}>
                   <td>{index + 1}.</td>
                   <td className="fst-italic">{song.title}</td>
                   <td className="text-end">{song.duration}</td>
@@ -97,7 +102,7 @@ const movies: MovieProps[] = [
   {
     title: "Gwiezdne wojny: część III – Zemsta Sithów",
     poster: "public/Revenge of the Sith.jpg",
-    year: 2005,
+    year: 2012,
     rating: 8.3
   },
     {
@@ -109,7 +114,7 @@ const movies: MovieProps[] = [
     {
     title: "Gwiezdne wojny: część II – Atak klonów",
     poster: "public/Atak_klonow.jpg",
-    year: 2002,
+    year: 2013,
     rating: 6.6
   },
     {
@@ -218,13 +223,29 @@ function App() {
   const [isMoviesOpen, setIsMoviesOpen] = useState(true);
   const [isBooksOpen, setIsBooksOpen] = useState(true);
   const [isAlbumsOpen, setIsAlbumsOpen] = useState(true);
+
+  const [movieSearch, setMovieSearch] = useState("");
+  const [bookSearch, setBookSearch] = useState("");
+  const [albumSearch, setAlbumSearch] = useState("");
   //-----
   
   return (
     <div className="container" data-bs-theme="dark">
+
       <h2 onClick={() => setIsMoviesOpen(!isMoviesOpen)}>
         Najnowsze filmy{isMoviesOpen ? " ⏷" : " ⏵"}
       </h2>
+      <input 
+        id="movie-search"
+        type="text"
+        className="form-control"
+        placeholder="Wpisz tytuł"
+        onChange={(event) => {
+          console.log(`Movie search: ${event.target.value}`);
+          setMovieSearch(event.target.value);
+        }}
+      />
+      <p>Wpisany tekst: {movieSearch}</p>
         {isMoviesOpen && (
       <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {RecentMovies.map((movie) => (
@@ -240,10 +261,21 @@ function App() {
       </div>
       )}
 
-      
+\
       <h2 onClick={() => setIsBooksOpen(!isBooksOpen)}>
         Książki od najnowszej{isBooksOpen ? " ⏷" : " ⏵"}
       </h2>
+      <input
+        id="book-search"
+        type="text"
+        className="form-control"
+        placeholder="Wpisz tytuł"
+        onChange={(event) => {
+          console.log(`Book search: ${event.target.value}`);
+          setBookSearch(event.target.value);
+        }}
+      />
+      <p>Wpisany tekst: {bookSearch}</p>
       {isBooksOpen && (
       <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {BooksByYear.map((book) => (
@@ -259,10 +291,20 @@ function App() {
       </div>
       )}  
 
-      
       <h2 onClick={() => setIsAlbumsOpen(!isAlbumsOpen)}>
         Album z największą liczbą utworów{isAlbumsOpen ? " ⏷" : " ⏵"}
       </h2>
+      <input
+        id="album-search"
+        type="text"
+        className="form-control"
+        placeholder="Wpisz tytuł"
+        onChange={(event) => {
+          console.log(`Album search: ${event.target.value}`);
+          setAlbumSearch(event.target.value);
+        }}
+      />
+      <p>Wpisany tekst: {albumSearch}</p>
       {isAlbumsOpen && (
       <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <div className="col">
