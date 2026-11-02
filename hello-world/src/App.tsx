@@ -248,20 +248,34 @@ function App() {
       <p>Wpisany tekst: {movieSearch}</p>
         {isMoviesOpen && (
       <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        {RecentMovies.map((movie) => (
-          <div className="col" key={movie.title}>
-            <Movie
-              title={movie.title}
-              poster={movie.poster}
-              year={movie.year}
-              rating={movie.rating}
-            />
-          </div>
-        ))}
+        {movies.map((movie) => {
+          if (movie.title.toLocaleLowerCase().includes(movieSearch.toLocaleLowerCase())) {
+            return (
+              <div className="col" key={movie.title}>
+                <Movie
+                  title={movie.title}
+                  poster={movie.poster}
+                  year={movie.year}
+                  rating={movie.rating}
+                />
+              </div>
+            )
+          
+          }
+
+          return null;
+          
+        })}
+        
+        {
+          movies.filter((movie) => movie.title.toLocaleLowerCase().includes(movieSearch.toLocaleLowerCase())).length === 0 && (
+            <p className="alert alert-info" role="alert">Nie znaleziono filmów</p>
+          )
+        }
       </div>
       )}
 
-\
+
       <h2 onClick={() => setIsBooksOpen(!isBooksOpen)}>
         Książki od najnowszej{isBooksOpen ? " ⏷" : " ⏵"}
       </h2>
@@ -278,16 +292,30 @@ function App() {
       <p>Wpisany tekst: {bookSearch}</p>
       {isBooksOpen && (
       <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        {BooksByYear.map((book) => (
-          <div className="col" key={book.title}>
-            <Book
-              title={book.title}
-              cover={book.cover}
-              year={book.year}
-              pages={book.pages}
-            />
-          </div>
-        ))}
+        {books.map((book) => {
+          if (book.title.toLocaleLowerCase().includes(bookSearch.toLocaleLowerCase())) {
+            return (
+              <div className="col" key={book.title}>
+                <Book
+                  title={book.title}
+                  cover={book.cover}
+                  year={book.year}
+                  pages={book.pages}
+                />
+              </div>
+            )
+          
+          }
+
+          return null;
+          
+        })}
+
+        {
+          books.filter((book) => book.title.toLocaleLowerCase().includes(bookSearch.toLocaleLowerCase())).length === 0 && (
+            <p className="alert alert-info" role="alert">Nie znaleziono książek</p>
+          )
+        }
       </div>
       )}  
 
@@ -307,16 +335,31 @@ function App() {
       <p>Wpisany tekst: {albumSearch}</p>
       {isAlbumsOpen && (
       <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        <div className="col">
-        <Album
-          title={LongestAlbum.title}
-          artist={LongestAlbum.artist}
-          cover={LongestAlbum.cover}
-          year={LongestAlbum.year}
-          genre={LongestAlbum.genre}
-          songs={LongestAlbum.songs}
-        />
-        </div>
+        {albums.map((album) => {
+          if (album.title.toLocaleLowerCase().includes(albumSearch.toLocaleLowerCase())) {
+            return (
+              <div className="col">
+                <Album
+                  title={album.title}
+                  artist={album.artist}
+                  cover={album.cover}
+                  year={album.year}
+                  genre={album.genre}
+                  songs={album.songs}
+                />
+              </div>
+            )
+          
+          }
+
+          return null;
+        })}
+
+        {
+          albums.filter((album) => album.title.toLocaleLowerCase().includes(albumSearch.toLocaleLowerCase())).length === 0 && (
+            <p className="alert alert-info" role="alert">Nie znaleziono albumów</p>
+          )
+        }
       </div>
       )}
     </div>
